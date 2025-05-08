@@ -1,0 +1,52 @@
+name: Deploy FastAPI Backend with Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Clean remote backend folder before deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            rm -rf /home/azureuser/proyectoBD/backend/*
+
+      - name: Copy backend files via SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "./backend/*"
+          target: "/home/azureuser/proyectoBD/backend"
+          strip_components: 1
+
+      - name: Build and run Docker container on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/azureuser/proyectoBD/backend
+
+            # Construye la imagen Docker
+            docker build -t fastapi-backend:latest .
+
+            # Detiene y elimina el contenedor anterior si existe
+            docker stop fastapi-backend || true
+            docker rm fastapi-backend || true
+
+            # Arranca el nuevo contenedor
+            docker run -d --name fastapi-backend -p 8000:8000 fastapi-backend:latest
