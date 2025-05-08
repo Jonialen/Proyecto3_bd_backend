@@ -13,6 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: List backend files (debug)
+        run: ls -la ./backend
+
       - name: Clean remote backend folder before deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -28,7 +31,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "./backend/*"
+          source: "./backend"
           target: "/home/azureuser/proyectoBD/backend"
           strip_components: 1
 
@@ -50,3 +53,4 @@ jobs:
 
             # Arranca el nuevo contenedor
             docker run -d --name fastapi-backend -p 8000:8000 fastapi-backend:latest
+
