@@ -13,7 +13,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copia el resto del código
 COPY . .
-COPY .env .env
 # Expone el puerto (ajusta si usas otro)
 EXPOSE 8000
 
