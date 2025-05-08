@@ -1,4 +1,4 @@
-name: Deploy FastAPI Backend with Docker
+name: Deploy FastAPI Backend
 
 on:
   push:
@@ -12,9 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: List backend files (debug)
-        run: ls -la .
 
       - name: Clean remote backend folder before deploy
         uses: appleboy/ssh-action@v1.0.3
@@ -31,26 +28,25 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "."
+          source: "backend"
           target: "/home/azureuser/proyectoBD/backend"
-          strip_components: 0
+          strip_components: 1
 
-      - name: Build and run Docker container on server
+      - name: Build and run Docker Compose on server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/azureuser/proyectoBD/backend
+            cd /home/azureuser/proyectoBD
 
-            # Construye la imagen Docker
-            docker build -t fastapi-backend:latest .
+            # Instala docker-compose si no está instalado
+            if ! command -v docker-compose &> /dev/null; then
+              sudo apt update
+              sudo apt install -y docker-compose
+            fi
 
-            # Detiene y elimina el contenedor anterior si existe
-            docker stop fastapi-backend || true
-            docker rm fastapi-backend || true
-
-            # Arranca el nuevo contenedor
-            docker run -d --name fastapi-backend -p 8000:8000 fastapi-backend:latest
+            # Levanta backend y base de datos (si ya está la carpeta database)
+            docker compose up -d --build
 
