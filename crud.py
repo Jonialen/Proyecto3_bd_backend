@@ -184,3 +184,17 @@ class CourtCrud:
                 return {"success": True, "data": data}
         except psycopg2.Error as e:
             return {"success": False, "error": str(e).split('\n')[0]}
+
+    def get_all_court_types(self):
+        try:
+            with self.db.get_cursor() as cur:
+                cur.execute("""
+                    SELECT id_type, type_name
+                    FROM court_types
+                    ORDER BY id_type;
+                """)
+                data = cur.fetchall()
+                return {"success": True, "data": data}
+        except psycopg2.Error as e:
+            return {"success": False, "error": str(e).split('\n')[0]}
+

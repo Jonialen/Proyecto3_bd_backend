@@ -57,6 +57,10 @@ class UpdateBookingStatus(BaseModel):
     new_status: str
 
 # --------- ENDPOINTS ---------
+@router.get("/")
+def hola():
+    return "<h1>API!!</h1>"
+
 @router.post("/register")
 def register(user: UserRegister):
     result = auth.register(user.name, user.last_name, user.email, user.password)
@@ -157,6 +161,14 @@ def get_user_pending_bookings(id_user: int):
 @router.get("/users/{id_user}/bookings/confirmed")
 def get_user_confirmed_bookings(id_user: int):
     return court_crud.get_user_confirmed_bookings(id_user)
+
+@router.get("/court-types")
+def get_all_court_types():
+    result = court_crud.get_all_court_types()
+    if not result["success"]:
+        raise HTTPException(status_code=400, detail=result["error"])
+    return result
+
 
 # Monta el router con el prefijo
 app.include_router(router, prefix=API_PREFIX)
