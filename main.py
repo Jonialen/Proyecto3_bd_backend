@@ -6,6 +6,7 @@ from typing import Optional
 from userCrud import UserCrud
 from auth import Auth
 from crud import CourtCrud
+from reportsCrud import Reports
 
 API_PREFIX = "/api"
 
@@ -24,6 +25,8 @@ app.add_middleware(
 user_crud = UserCrud()
 auth = Auth()
 court_crud = CourtCrud()
+reports = Reports()
+
 
 # --------- MODELOS ---------
 class UserRegister(BaseModel):
@@ -168,6 +171,86 @@ def get_all_court_types():
     if not result["success"]:
         raise HTTPException(status_code=400, detail=result["error"])
     return result
+
+@router.get("/reports/ingresos-mes")
+def ingresos_totales_por_mes():
+    return reports.ingresos_totales_por_mes()
+
+@router.get("/reports/reservas-por-usuario")
+def reservas_por_usuario():
+    return reports.reservas_por_usuario()
+
+@router.get("/reports/reservas-por-estado")
+def reservas_por_estado():
+    return reports.reservas_por_estado()
+
+@router.get("/reports/reservas-por-tipo-cancha")
+def reservas_por_tipo_cancha():
+    return reports.reservas_por_tipo_cancha()
+
+@router.get("/reports/reservas-por-cancha")
+def reservas_por_cancha():
+    return reports.reservas_por_cancha()
+
+@router.get("/reports/reservas-por-dia")
+def reservas_por_dia():
+    return reports.reservas_por_dia()
+
+@router.get("/reports/reservas-por-hora")
+def reservas_por_hora():
+    return reports.reservas_por_hora()
+
+@router.get("/reports/promociones-mas-usadas")
+def promociones_mas_usadas():
+    return reports.promociones_mas_usadas()
+
+@router.get("/reports/reservas-con-promocion")
+def reservas_con_promocion():
+    return reports.reservas_con_promocion()
+
+@router.get("/reports/facturacion-por-usuario")
+def facturacion_por_usuario():
+    return reports.facturacion_por_usuario()
+
+@router.get("/reports/facturacion-por-tipo-cancha")
+def facturacion_por_tipo_cancha():
+    return reports.facturacion_por_tipo_cancha()
+
+@router.get("/reports/reservas-canceladas-por-usuario")
+def reservas_canceladas_por_usuario():
+    return reports.reservas_canceladas_por_usuario()
+
+@router.get("/reports/reservas-pendientes-por-usuario")
+def reservas_pendientes_por_usuario():
+    return reports.reservas_pendientes_por_usuario()
+
+@router.get("/reports/reservas-confirmadas-por-usuario")
+def reservas_confirmadas_por_usuario():
+    return reports.reservas_confirmadas_por_usuario()
+
+@router.get("/reports/canchas-mas-rentadas")
+def canchas_mas_rentadas():
+    return reports.canchas_mas_rentadas()
+
+@router.get("/reports/usuarios-con-mas-reservas")
+def usuarios_con_mas_reservas():
+    return reports.usuarios_con_mas_reservas()
+
+@router.get("/reports/promociones-activas-hoy")
+def promociones_activas_hoy():
+    return reports.promociones_activas_hoy()
+
+@router.get("/reports/reservas-por-promocion")
+def reservas_por_promocion():
+    return reports.reservas_por_promocion()
+
+@router.get("/reports/ingresos-por-dia")
+def ingresos_por_dia():
+    return reports.ingresos_por_dia()
+
+@router.get("/reports/reservas-por-rango-fechas")
+def reservas_por_rango_fechas(fecha_inicio: str, fecha_fin: str):
+    return reports.reservas_por_rango_fechas(fecha_inicio, fecha_fin)
 
 
 # Monta el router con el prefijo
