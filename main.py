@@ -1,7 +1,8 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
+from custom_reports import CustomReports
 
 from userCrud import UserCrud
 from auth import Auth
@@ -12,6 +13,7 @@ API_PREFIX = "/api"
 
 app = FastAPI()
 router = APIRouter()
+custom_reports = CustomReports()
 
 # CORS (opcional, para desarrollo)
 app.add_middleware(
@@ -252,6 +254,67 @@ def ingresos_por_dia():
 def reservas_por_rango_fechas(fecha_inicio: str, fecha_fin: str):
     return reports.reservas_por_rango_fechas(fecha_inicio, fecha_fin)
 
+@router.get("/courts-type")
+def get_courts_type():
+    return custom_reports.get_courts_type()
+
+@router.get("/promociones")
+def get_promociones():
+    return custom_reports.get_promociones()
+
+@router.get("/get_horarios")
+def get_horarios():
+    return custom_reports.get_horarios()
+
+@router.get("/reservas")
+def reservas(
+    fecha_inicio: str = Query(None),
+    fecha_fin: str = Query(None),
+    canchas_tipo: int = Query(None),
+    estado: str = Query(None)
+):
+    return custom_reports.reservas(fecha_inicio, fecha_fin, canchas_tipo, estado)
+
+@router.get("/ingresos")
+def ingresos(
+    fecha_inicio: str = Query(None),
+    fecha_fin: str = Query(None),
+    agrupar: str = Query("dia"),
+    cancha_tipo: int = Query(None)
+):
+    return custom_reports.ingresos(fecha_inicio, fecha_fin, agrupar, cancha_tipo)
+
+@router.get("/usuarios")
+def usuarios(
+    fecha_inicio: str = Query(None),
+    fecha_fin: str = Query(None),
+    horario_dia: str = Query(None),
+    min_reservas: int = Query(5)
+):
+    return custom_reports.usuarios(fecha_inicio, fecha_fin, horario_dia, min_reservas)
+
+@router.get("/promociones-aplicadas")
+def promociones_aplicadas(
+    fecha_inicio: str = Query(None),
+    fecha_fin: str = Query(None),
+    nombre_promocion: str = Query(None)
+):
+    return custom_reports.promociones_aplicadas(fecha_inicio, fecha_fin, nombre_promocion)
+
+@router.get("/cuantas-veces")
+def cuantas_veces(
+    nombre_promocion: str = Query(None)
+):
+    return custom_reports.cuantas_veces(nombre_promocion)
+
+@router.get("/disponibilidad-canchas")
+def disponibilidad_canchas(
+    fecha_inicio: str = Query(None),
+    fecha_fin: str = Query(None),
+    tipo_cancha: int = Query(None),
+    horario_dia: str = Query(None)
+):
+    return custom_reports.disponibilidad_canchas(fecha_inicio, fecha_fin, tipo_cancha, horario_dia)
 
 # Monta el router con el prefijo
 app.include_router(router, prefix=API_PREFIX)
