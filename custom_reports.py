@@ -5,12 +5,12 @@ def get_time_range(horario_dia):
     if not horario_dia:
         return None, None
     horario_dia = horario_dia.lower()
-    if horario_dia == "Mañana":
-        return "06:00", "12:00"
-    elif horario_dia == "Tarde":
-        return "12:00", "18:00"
-    elif horario_dia == "Noche":
-        return "18:00", "24:00"
+    if horario_dia == "manana":
+        return "06:00:00", "12:00:00"
+    elif horario_dia == "tarde":
+        return "12:00:00", "18:00:00"
+    elif horario_dia == "noche":
+        return "18:00:00", "24:00:00"
     return None, None
 
 class CustomReports:
@@ -43,7 +43,7 @@ class CustomReports:
         return {
             "success": True,
             "data": [
-                {"nombre": "Mañana", "inicio": "06:00", "fin": "12:00"},
+                {"nombre": "Manana", "inicio": "06:00", "fin": "12:00"},
                 {"nombre": "Tarde", "inicio": "12:00", "fin": "18:00"},
                 {"nombre": "Noche", "inicio": "18:00", "fin": "24:00"},
             ]
@@ -152,7 +152,7 @@ class CustomReports:
                 if horario_dia:
                     start, end = get_time_range(horario_dia)
                     if start and end:
-                        query += " AND s.start_time >= %s AND s.start_time < %s"
+                        query += " AND s.end_time >= %s AND s.start_time < %s"
                         params.extend([start, end])
                 query += " GROUP BY u.id_user, u.name"
                 if min_reservas:
@@ -236,7 +236,7 @@ class CustomReports:
                 if horario_dia:
                     start, end = get_time_range(horario_dia)
                     if start and end:
-                        query += " AND s.start_time >= %s AND s.start_time < %s"
+                        query += " AND s.end_time >= %s AND s.start_time < %s"
                         params.extend([start, end])
                 query += " GROUP BY c.id_court, ct.type_name ORDER BY veces_reservada DESC"
                 cur.execute(query, tuple(params))
