@@ -289,7 +289,7 @@ def usuarios(
     fecha_inicio: str = Query(None),
     fecha_fin: str = Query(None),
     horario_dia: str = Query(None),
-    min_reservas: int = Query(5)
+    min_reservas: int = Query(1)
 ):
     return custom_reports.usuarios(fecha_inicio, fecha_fin, horario_dia, min_reservas)
 
