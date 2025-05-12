@@ -156,7 +156,7 @@ class CustomReports:
                         params.extend([start, end])
                 query += " GROUP BY u.id_user, u.name"
                 if min_reservas:
-                    query += " HAVING COUNT(b.id_booking) > %s"
+                    query += " HAVING COUNT(b.id_booking) >= %s"
                     params.append(min_reservas)
                 query += " ORDER BY cantidad_reservas DESC"
                 cur.execute(query, tuple(params))
