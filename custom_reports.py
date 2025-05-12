@@ -5,11 +5,11 @@ def get_time_range(horario_dia):
     if not horario_dia:
         return None, None
     horario_dia = horario_dia.lower()
-    if horario_dia == "mañana":
+    if horario_dia == "Mañana":
         return "06:00", "12:00"
-    elif horario_dia == "tarde":
+    elif horario_dia == "Tarde":
         return "12:00", "18:00"
-    elif horario_dia == "noche":
+    elif horario_dia == "Noche":
         return "18:00", "24:00"
     return None, None
 
