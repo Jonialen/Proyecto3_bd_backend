@@ -120,7 +120,7 @@ class CustomReports:
         except psycopg2.Error as e:
             return {"success": False, "error": str(e).split('\n')[0]}
 
-    def usuarios(self, fecha_inicio=None, fecha_fin=None, horario_dia=None, min_reservas=5):
+    def usuarios(self, fecha_inicio=None, fecha_fin=None, horario_dia=None, min_reservas=1):
         try:
             with self.db.get_cursor() as cur:
                 query = """
