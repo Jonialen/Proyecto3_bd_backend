@@ -6,7 +6,7 @@ def get_time_range(horario_dia):
         return None, None
     horario_dia = horario_dia.lower()
     if horario_dia == "manana":
-        return "06:00:00", "12:00:00"
+        return "00:00:00", "12:00:00"
     elif horario_dia == "tarde":
         return "12:00:00", "18:00:00"
     elif horario_dia == "noche":
@@ -152,7 +152,7 @@ class CustomReports:
                 if horario_dia:
                     start, end = get_time_range(horario_dia)
                     if start and end:
-                        query += " AND s.end_time >= %s AND s.start_time < %s"
+                        query += " AND s.start_time >= %s AND s.end_time < %s"
                         params.extend([start, end])
                 query += " GROUP BY u.id_user, u.name"
                 if min_reservas:
@@ -160,6 +160,7 @@ class CustomReports:
                     params.append(min_reservas)
                 query += " ORDER BY cantidad_reservas DESC"
                 cur.execute(query, tuple(params))
+                print(query, tuple(params))
                 return {"success": True, "data": cur.fetchall()}
         except psycopg2.Error as e:
             return {"success": False, "error": str(e).split('\n')[0]}
@@ -236,7 +237,7 @@ class CustomReports:
                 if horario_dia:
                     start, end = get_time_range(horario_dia)
                     if start and end:
-                        query += " AND s.end_time >= %s AND s.start_time < %s"
+                        query += " AND s.start_time >= %s AND s.end_time < %s"
                         params.extend([start, end])
                 query += " GROUP BY c.id_court, ct.type_name ORDER BY veces_reservada DESC"
                 cur.execute(query, tuple(params))
