@@ -155,10 +155,12 @@ class CustomReports:
                         query += " AND s.end_time >= %s AND s.start_time < %s"
                         params.extend([start, end])
                 query += " GROUP BY u.id_user, u.name"
-                if min_reservas:
+                if min_reservas and min_reservas > 0:
                     query += " HAVING COUNT(b.id_booking) >= %s"
                     params.append(min_reservas)
                 query += " ORDER BY cantidad_reservas DESC"
+                print(query)
+                print(params)
                 cur.execute(query, tuple(params))
                 return {"success": True, "data": cur.fetchall()}
         except psycopg2.Error as e:
