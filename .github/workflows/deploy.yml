@@ -16,6 +16,16 @@ jobs:
       - name: List files in workspace
         run: ls -lR
 
+      - name: Stop and remove existing containers
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            docker compose down || true
+
       - name: Clean remote backend folder before deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -23,28 +33,17 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            rm -rf /home/azureuser/proyectoBD/backend/*
+            rm -rf ${{ secrets.DEPLOY_PATH }}/backend/*
+            mkdir -p ${{ secrets.DEPLOY_PATH }}/backend
 
-      - name: Copy backend files via SSH
+      - name: Copy backend files via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "."
-          target: "/home/azureuser/proyectoBD/backend"
-          strip_components: 1
-
-      - name: Docker Compose Down
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/azureuser/proyectoBD
-            docker compose down
-
+          target: "${{ secrets.DEPLOY_PATH }}/backend"
 
       - name: Build and run Docker Compose on server
         uses: appleboy/ssh-action@v1.0.3
@@ -53,6 +52,5 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/azureuser/proyectoBD
+            cd ${{ secrets.DEPLOY_PATH }}
             docker compose up -d --build
-
